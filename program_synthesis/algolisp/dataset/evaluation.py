@@ -30,6 +30,7 @@ def compute_bleu(example, res):
 
 def get_stats_from_code(args):
     res, example, executor_ = args
+    #print("In get stats: " + str(res))
     if len(example.tests) == 0:
         return None
     if executor_ is not None:
@@ -57,8 +58,8 @@ def run_inference(dataset, model, executor_):
         executor: executor class from executor.py.
     """
     for batch in dataset:
-        results = model.inference(batch)
-        for stats in model.worker_pool.imap(get_stats_from_code, zip(results, batch, [executor_]*len(batch))):
+        results = model.inference(batch)        
+        for stats in map(get_stats_from_code, zip(results, batch, [executor_]*len(batch))):
             if stats is not None:
                 yield stats
     return

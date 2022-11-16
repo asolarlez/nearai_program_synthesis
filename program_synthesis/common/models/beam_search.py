@@ -87,7 +87,10 @@ def beam_search(batch_size,
 
         vocab_size = logits.size(1)
         # log_probs: batch size x beam size x vocab size
-        log_probs = F.log_softmax(logits, dim=-1).view(batch_size, -1, vocab_size)
+        tmparr = F.log_softmax(logits, dim=-1)
+        print("logits", logits.shape)
+        print("TA", tmparr.shape)
+        log_probs = tmparr.view(batch_size, -1, vocab_size)
         acc_log_probs = log_probs + prev_acc_log_probs.unsqueeze(2)
         # log_probs_flat: batch size x beam_size * vocab_size
         acc_log_probs_flat = acc_log_probs.view(batch_size, -1)
@@ -98,6 +101,7 @@ def beam_search(batch_size,
         # prev_tokens: batch_size x beam size
         # Each entry indicates which token should be added to each beam.
         prev_tokens = indices_flat % vocab_size
+        print("PT", log_probs.shape, current_beam_size)
         # This takes a lot of time... about 50% of the whole thing.
         indices_flat = indices_flat.cpu()
         # beam_indices: batch size x beam size
@@ -110,11 +114,12 @@ def beam_search(batch_size,
                 torch.arange(0, batch_size, out=torch.LongTensor()).unsqueeze(1).repeat(
                     1, current_beam_size).view(-1), volatile=volatile)
             seq_beam_indices = torch.stack([cur_seq_indices, beam_indices.view(-1)])
+        print("BI", indices_flat.shape, vocab_size)
         # prev_hidden: (batch size * beam size) x hidden size
         # Contains the hidden states which produced the top-k (k = beam size)
         # tokens, and should be extended in the step.
         prev_hidden = hidden.select_for_beams(batch_size, seq_beam_indices)
-
+       
         prev_unfinished_beams = unfinished_beams
         unfinished_beams = [[] for _ in range(batch_size)]
         can_stop = True
@@ -133,7 +138,7 @@ def beam_search(batch_size,
                     continue
             for beam_id in range(current_beam_size):
                 token = prev_tokens_np[seq_id, beam_id]
-                new_beam_id = beam_indices_np[seq_id, beam_id]
+                new_beam_id = math.floor(beam_indices_np[seq_id, beam_id])
                 # print(step, batch_id, idx, 'token', token, kidx, 'prev', prev_result[batch_id][kidx], prev_probs.data[batch_id][idx])
                 if token == 1:  # 1 == </S>
                     finished_beams[seq_id].append(BeamSearchResult(
@@ -143,7 +148,7 @@ def beam_search(batch_size,
                                   [log_probs_np[seq_id, new_beam_id, token]]))
                     unfinished_beams[seq_id].append(BeamSearchResult(sequence=[], log_probs=[], total_log_prob=0))
                     prev_acc_log_probs.data[seq_id, beam_id] = float('-inf')
-                else:
+                else:                    
                     unfinished_beams[seq_id].append(BeamSearchResult(
                         sequence=prev_unfinished_beams[seq_id][new_beam_id].sequence + [token],
                         total_log_prob=prev_acc_log_probs_np[seq_id, beam_id],

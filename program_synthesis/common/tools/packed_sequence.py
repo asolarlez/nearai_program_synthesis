@@ -34,10 +34,10 @@ class PackedSequencePlus(collections.namedtuple('PackedSequencePlus',
                                                  for i in self.sort_to_orig]
         return results + tuple(t[self.sort_to_orig] for t in others_to_unsort)
 
-    def cuda(self, async=False):
+    def cuda(self, asnc=False):
         if self.ps.data.is_cuda:
             return self
-        return self.apply(lambda d: d.cuda(async=async))
+        return self.apply(lambda d: d.cuda(asnc=asnc))
 
     def raw_index(self, orig_batch_idx, seq_idx):
         result = np.take(self.cum_batch_sizes, seq_idx) + np.take(

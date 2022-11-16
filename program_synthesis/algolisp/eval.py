@@ -72,11 +72,11 @@ def evaluate(args):
     else:
         current_executor = None
     if args.example_id is not None:
-        eval_dataset.data = [eval_dataset.task[args.example_id]]
+        eval_dataset.data = [eval_dataset.data[args.example_id]]
 
     all_stats = []
     with tqdm.tqdm(total=len(eval_dataset.data)) as pbar:
-        m.worker_pool = mp.Pool(mp.cpu_count())
+        m.worker_pool = mp.Pool(1) # mp.cpu_count()
         for stats in evaluation.run_inference(eval_dataset, m, current_executor):
             all_stats.append(stats)
             pbar.update(1)

@@ -1,0 +1,3 @@
+program_synthesis/algolisp/reports/*
+program_synthesis/algolisp/models/seq2seq/*
+program_synthesis/algolisp/cuda-repo-*

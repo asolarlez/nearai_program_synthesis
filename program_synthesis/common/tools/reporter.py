@@ -19,20 +19,23 @@ class TensorBoardWriter(object):
             raise ValueError(
                 "You must install TensorFlow " +
                 "to use Tensorboard summary writer.")
-        self._writer = tb_summary.FileWriter(logdir)
+        #self._writer = tb_summary.FileWriter(logdir)
 
     def add(self, step, key, value):
-        summary = tb_summary.Summary()
-        summary_value = summary.value.add()
-        summary_value.tag = key
-        summary_value.simple_value = value
-        self._writer.add_summary(summary, global_step=step)
+        print(self, step, key, value)
+        #summary = tb_summary.Summary()
+        #summary_value = summary.value.add()
+        #summary_value.tag = key
+        #summary_value.simple_value = value
+        #self._writer.add_summary(summary, global_step=step)
 
     def flush(self):
-        self._writer.flush()
+        pass
+        #self._writer.flush()
 
     def close(self):
-        self._writer.close()
+        pass
+        #self._writer.close()
 
 
 class Reporter(object):
