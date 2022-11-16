@@ -115,3 +115,10 @@ ENV/
 # Data files
 *.pkl
 *.pkl.index
+program_synthesis/algolisp/cuda-repo-wsl-ubuntu-11-8-local_11.8.0-1_amd64.deb
+program_synthesis/algolisp/models/seq2seq/args.json
+program_synthesis/algolisp/models/seq2seq/checkpoint
+program_synthesis/algolisp/models/seq2seq/checkpoint-00000100
+program_synthesis/algolisp/models/seq2seq/checkpoint-00001600
+program_synthesis/algolisp/reports/report-seq2seq-1668495498.json
+program_synthesis/algolisp/reports/report-seq2seq-1668502676.json
